@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+    <div class="content content-nav-base commodity-content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                        <a href="{% url 'goods:goods_all' %}" class="active">所有商品</a>
+                        <a href="{% url 'user:perCen' request.session.user_id %}">个人中心</a>
+                        <a href="{% url 'goods:goods_browser' %}">浏览记录</a>
+                        <a href="{% url 'order:orders' %}">订单</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="commod-cont-wrap">
+            <div class="commod-cont w1200 layui-clear">
+                <div class="left-nav">
+                    <div class="title">所有分类</div>
+                    <div class="list-box">
+                        {% for type in type_info %}
+                            {% if type.type_id == null %}
+                                <dl>
+                                    <dt><a href="{% url 'goods:goods_all' type.id %}">{{ type.title }}</a></dt>
+                                    {% for t in type_info %}
+                                        {% if t.type_id == type.id %}
+                                            <dd><a href="{% url 'goods:goods_all' t.id %}">{{ t.title }}</a></dd>
+                                        {% endif %}
+                                    {% endfor %}
+                                </dl>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="right-cont-wrap">
+                    <div class="right-cont">
+                        <div class="sort layui-clear">
+                            <a href="{% url 'goods:goods_all' '01' %}" event='price'>价格</a>
+                            <a href="{% url 'goods:goods_all' '02' %}" event='newprod'>新品</a>
+                        </div>
+                        <div class="prod-number">
+                            <span id="ct_num"></span>
+                        </div>
+                        <div class="cont-list layui-clear" id="list-cont">
+
+
+                        </div>
+                        <div id="ef_e"></div>
+                        <div id="demo0" style="text-align: center;"></div>
+                        <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
+                        <script>
+                            goods()
+
+                            function goods() {
+                                $.ajax({
+                                    type: "get",
+                                    dataType: "json",
+                                    {% if type_id == 0 %}
+                                        url: "http://127.0.0.1:8000/goods/api/goods/all/",
+                                    {% else %}
+                                        url: "http://127.0.0.1:8000/goods/api/goods/all/{{ type_id }}/",
+                                    {% endif %}
+                                    data: {},
+                                    success: function (res) {
+                                        layui.config({
+                                            base: '{% static 'js/util' %}/'
+                                        }).use(['mm', 'laypage', 'jquery'], function () {
+                                            var laypage = layui.laypage, $ = layui.$,
+                                                mm = layui.mm;
+                                            laypage.render({
+                                                elem: 'demo0',
+                                                count: res.length, //数据总数
+                                                limit: 9,
+                                                jump: function (obj) {
+                                                    $("#ct_num").html(res.length + '个');
+                                                    document.getElementById('list-cont').innerHTML = function () {
+                                                        var arr = [],
+                                                            thisData = res.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
+                                                        layui.each(thisData, function (index, item) {
+                                                            console.log(item['pk'])
+                                                            arr.push('<div class="item">\n' +
+                                                                '                <div class="img">\n' +
+                                                                '                  <a href="http://127.0.0.1:8000/goods/goods/detail/' + item['pk'] + '/"><img style="width: 280px;    height: 280px;" src="http://127.0.0.1:8000/' +
+                                                                item['fields']['pic']
+                                                                + '"></a>\n' +
+                                                                '                </div>\n' +
+                                                                '                <div class="text">\n' +
+                                                                '                  <p class="title">' + item['fields']['title'] + '</p>\n' +
+                                                                '                  <p class="price">\n' +
+                                                                '                    <span class="pri">￥' + item['fields']['price'] + '</span>\n' +
+                                                                '                  </p>\n' +
+                                                                '                </div>\n' +
+                                                                '              </div>');
+                                                        });
+
+                                                        return arr.join('');
+                                                    }();
+                                                }
+                                            });
+                                            $('.sort a').on('click', function () {
+                                                $(this).addClass('active').siblings().removeClass('active');
+                                            })
+                                            $('.list-box dt').on('click', function () {
+                                                if ($(this).attr('off')) {
+                                                    $(this).removeClass('active').siblings('dd').show()
+                                                    $(this).attr('off', '')
+                                                } else {
+                                                    $(this).addClass('active').siblings('dd').hide()
+                                                    $(this).attr('off', true)
+                                                }
+                                            })
+
+                                        });
+                                    },
+                                    error: function (res) {
+                                        alert('服务器繁忙,请稍后重试')
+                                    }
+                                });
+                            }
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

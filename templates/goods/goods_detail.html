@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <script type="text/javascript" src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/etalage.css' %}">
+    <script src="{% static 'js/jquery.etalage.min.js' %}"></script>
+{% endblock head %}
+{% block body %}
+    <script>
+        jQuery(document).ready(function ($) {
+
+            $('#etalage').etalage({
+                thumb_image_width: 300,
+                thumb_image_height: 300,
+                source_image_width: 500,
+                source_image_height: 500,
+                show_hint: true,
+                click_callback: function (image_anchor, instance_id) {
+                    alert('Callback example:\nYou clicked on an image with the anchor: "' + image_anchor + '"\n(in Etalage instance: "' + instance_id + '")');
+                }
+            });
+
+        });
+    </script>
+    <style>
+        .fl {
+            float: left;
+        }
+
+        .clearfix:after {
+            content: "";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+        }
+
+        .ct_color_sn {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .ct_color_span {
+            font-size: 16px;
+            margin: 10px;
+            display: block;
+            border: #bfbfbf 1px solid;
+            padding: 5px
+        }
+
+        .ct_color_span:hover {
+            border: red 1px solid;
+        }
+
+        .ct_size_span {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <div class="content content-nav-base shopcart-content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                        <a href="{% url 'goods:goods_all' %}" class="active">所有商品</a>
+                        <a href="{% url 'user:perCen' request.session.user_id %}">个人中心</a>
+                        <a href="{% url 'goods:goods_browser' %}">浏览记录</a>
+                        <a href="{% url 'order:orders' %}">订单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix" style="; width: 1200px; margin: 60px auto">
+            <div class="grid images_3_of_2 fl" style="height: 500px; width: 400px; margin-left: 50px">
+                <ul id="etalage">
+                    {% for sku in goods.goodssku_set.all %}
+                        <li>
+                            <img class="etalage_thumb_image" src="http://127.0.0.1:8000/{{ sku.pic }}"
+                                 class="img-responsive"/>
+                            <img class="etalage_source_image" src="http://127.0.0.1:8000/{{ sku.pic }}"
+                                 class="img-responsive"
+                                 title=""/>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="fl" style="width: 520px; margin-left: 190px">
+                <h1>{{ goods.title }}</h1>
+                <div class="layui-bg-gray" style=" margin-top: 20px; line-height: 100px;">
+                    <h1 style="color: red; padding-left: 20px">￥{{ goods.price }}</h1>
+                </div>
+
+                <div style="margin-top: 30px;" class="clearfix">
+                    <span class="ct_color_sn clearfix">颜色</span>
+                    {% for sku in goods.goodssku_set.all %}
+                        <span id="1" class="fl ct_color_span ct_color" onclick="colorSelection(this)"
+                              value="{{ sku.id }}"><span
+                                class="fl">{{ sku.color }}</span><img style="width: 20px; height: 20px"
+                                                                      src="http://127.0.0.1:8000/{{ sku.pic }}" alt=""></span>
+                    {% endfor %}
+                </div>
+
+                <div style="margin-top: 30px;" class="clearfix">
+                    <span class="ct_color_sn clearfix">尺寸</span>
+                    <div id="ct_color_size">
+                        <span class="fl ct_color_span ct_size_span">先选颜色</span>
+                    </div>
+                </div>
+
+                <div style="margin: 20px 0 30px 0">
+                    <i class="layui-icon layui-icon-left"
+                       style="margin: 0 10px; border: #dfdfdf 0.5px solid; cursor:pointer" onclick="del_num(this)"></i>
+                    <input style="width: 20px;text-align:center" type="text" id="ct_purchase_num" value="1">
+                    <i class="layui-icon layui-icon-right"
+                       style="margin: 0 10px; border: #dfdfdf 0.5px solid; cursor:pointer" onclick="add_num(this)"></i>
+                </div>
+                <div style="margin: 20px 0 20px 0 ">
+                    <button type="button" onclick="tocart()" class="layui-btn layui-btn-normal layui-btn-radius">加入购物车
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let color_val = '';
+        let size_val = '';
+
+        function colorSelection(obj) {
+            let color = document.getElementsByClassName('ct_color');
+            for (i = 0; i < color.length; i++) {
+                color[i].style.border = '#bfbfbf 1px solid'
+            }
+            $(obj).css('border', 'red 1px solid');
+            color_val = $(obj).attr("value")
+            let ct_color_size = document.getElementById('ct_color_size');
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: "http://127.0.0.1:8000/goods/api/goods/detail/size/?sku_id=" + color_val,
+                data: {},
+                success: function (res) {
+                    ct_color_size.innerHTML = ''
+                    for (i = 0; i < res.length; i++) {
+                        ct_color_size.innerHTML += '<span class="fl ct_color_span ct_size_span" onclick="sizeSelection(this)" value="' + res[i]["pk"] + '" >' + res[i]["fields"]['size'] + '</span>';
+                    }
+                },
+                error: function (res) {
+                    alert('服务器繁忙,请稍后重试')
+                }
+            });
+        }
+
+        function sizeSelection(obj) {
+            let size = document.getElementsByClassName('ct_size_span');
+            for (i = 0; i < size.length; i++) {
+                size[i].style.border = '#bfbfbf 1px solid'
+            }
+            $(obj).css('border', 'red 1px solid');
+            size_val = $(obj).attr("value")
+        }
+
+        function add_num(obj) {
+
+            let i = parseInt($('#ct_purchase_num').attr("value")) + 1;
+            $("#ct_purchase_num").attr("value", i);
+        }
+
+        function del_num(obj) {
+            let i = parseInt($('#ct_purchase_num').attr("value")) - 1;
+            if (i < 1) {
+                alert('不能小于1')
+            } else {
+                $("#ct_purchase_num").attr("value", i);
+            }
+        }
+
+        function tocart() {
+            let num = parseInt($('#ct_purchase_num').attr("value"))
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "http://127.0.0.1:8000/cart/api/add/cart/",
+                data: {
+                    'size_id': size_val,
+                    'num': num,
+                },
+                success: function (res) {
+                    alert('添加购物车成功')
+                },
+                error: function (res) {
+                    alert('服务器繁忙,请稍后重试')
+                }
+            });
+        }
+    </script>
+
+{% endblock body %}

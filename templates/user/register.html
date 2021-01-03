@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <script type="text/javascript" src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+{% endblock head %}
+{% block body %}
+    <div class="content content-nav-base  login-content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-bg">
+            <div class="login-cont w1200">
+                <div class="form-box" style="    height: 456px;">
+                    <form class="layui-form" action="{% url 'user:register' %}" method="post">
+                        <legend>账号注册</legend>
+                        <div class="layui-form-item">
+                            <div class="layui-inline iphone">
+                                <div class="layui-input-inline">
+                                    <i class="layui-icon layui-icon-username iphone-icon"></i>
+                                    <input type="tel" name="username" id="phone" lay-verify="required|phone"
+                                           placeholder="请输入账号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline iphone">
+                                <div class="layui-input-inline">
+                                    <i class="layui-icon layui-icon-password iphone-icon"></i>
+                                    <input type="tel" name="password" id="phone" lay-verify="required|phone"
+                                           placeholder="请输入密码" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-inline iphone">
+                                <div class="layui-input-inline">
+                                    <i class="layui-icon layui-icon-cellphone-fine iphone-icon"></i>
+                                    <input type="tel" name="phone" id="ct_phone" lay-verify="required|phone"
+                                           placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-inline iphone">
+                                <div class="layui-input-inline">
+                                    <i class="layui-icon layui-icon-password iphone-icon"></i>
+                                    <input type="text" name="auth_code" placeholder="验证码" lay-verify="required|phone"
+                                           autocomplete="off" class="layui-input" id="ct_code" style="width: 190px; display: inline-block">
+                                    <button type="button" class="layui-btn layui-btn-normal layui-btn-radius" id="ct_auth_code" style="display: inline-block">获取验证码</button>
+
+                                    <script>
+                                        $('#ct_auth_code').click(function () {
+                                            var pdphone = $('#ct_phone').val();
+                                            console.log(pdphone)
+                                            var regMobile = /^1\d{10}$/
+                                            if (regMobile.test(pdphone) == false) {
+                                                alert('请输入正确手机号')
+                                            } else {
+                                                $.get('http://127.0.0.1:8000/user/sending/sms/', {
+                                                        phone: pdphone
+                                                    },
+                                                    function (data) {
+                                                    console.log(data)
+                                                        if (data.content == '用户手机已注册') {
+                                                            alert('用户手机已注册')
+                                                        } else if (data.content == 53){
+                                                        alert('发送信息太频繁')
+                                                        } else {
+                                                            let count = 60;
+                                                            const countDown = setInterval(() => {
+                                                                if (count === 0) {
+                                                                    $('#ct_auth_code').text('重新发送').removeAttr('disabled');
+                                                                    $('#ct_auth_code').css({
+                                                                        background: '#ff9400',
+                                                                        color: '#fff',
+                                                                    });
+                                                                    clearInterval(countDown);
+                                                                } else {
+                                                                    $('#ct_auth_code').attr('disabled', true);
+                                                                    $('#ct_auth_code').css({
+                                                                        background: '#d8d8d8',
+                                                                        color: '#707070',
+                                                                    });
+                                                                    $('#ct_auth_code').text(count + '秒后');
+                                                                }
+                                                                count--;
+                                                            }, 1000);
+                                                        }
+                                                    })
+                                            }
+                                        })
+                                    </script>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="layui-form-item login-btn">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit="" lay-filter="demo1" type="submit">注册</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let flag = "{{ mes }}";
+        if (flag) {
+            alert("{{ mes }}")
+        }
+    </script>
+    <div id="time" style="text-align:right; display: none"></div>
+{% endblock body %}

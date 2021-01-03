@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+    <div class="content content-nav-base shopcart-content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                        <a href="{% url 'goods:goods_all' %}" class="active">所有商品</a>
+                        <a href="{% url 'user:perCen' request.session.user_id %}">个人中心</a>
+                        <a href="{% url 'goods:goods_browser' %}">浏览记录</a>
+                        <a href="{% url 'order:orders' %}">订单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="banner-bg w1200">
+            <h3>夏季清仓</h3>
+            <p>男士、女士 衣服3折起</p>
+        </div>
+        <div class="cart w1200">
+            <div class="cart-table-th">
+                <div class="th th-chk">
+                    <div class="select-all">
+                        <div class="cart-checkbox">
+                            {#              <input class="check-all check" id="allCheckked" type="checkbox" value="true">#}
+                        </div>
+                        {#          <label>&nbsp;&nbsp;全选</label>#}
+                    </div>
+                </div>
+                <div class="th th-item">
+                    <div class="th-inner">
+                        商品
+                    </div>
+                </div>
+                <div class="th th-price">
+                    <div class="th-inner">
+                        单价
+                    </div>
+                </div>
+                <div class="th th-amount">
+                    <div class="th-inner">
+                        数量
+                    </div>
+                </div>
+                <div class="th th-sum">
+                    <div class="th-inner">
+                        小计
+                    </div>
+                </div>
+                <div class="th th-op">
+                    <div class="th-inner">
+                        操作
+                    </div>
+                </div>
+            </div>
+            <div class="OrderList">
+                <div class="order-content" id="list-cont">
+
+                    {% for g in goods %}
+                        <ul class="item-content layui-clear">
+                            <li class="th th-chk">
+                                <div class="select-all">
+                                    <div class="cart-checkbox">
+                                        {#                  <input class="CheckBoxShop check" id="" type="checkbox" num="all" name="select-all" value="true">#}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="th th-item">
+                                <div class="item-cont">
+                                    <a href="javascript:;"><img src="http://127.0.0.1:8000/{{ g.size.goodsSku.pic }}"
+                                                                alt=""></a>
+                                    <div class="text">
+                                        <div class="title">{{ g.size.goodsSku.goodsSpu.title }}</div>
+                                        <p><span>{{ g.size.goodsSku.color }}</span> <span>{{ g.size.size }}</span></p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="th th-price">
+                                <span class="th-su">{{ g.size.goodsSku.goodsSpu.price }}</span>
+                            </li>
+                            <li class="th th-amount">
+                                <div class="box-btn layui-clear">
+                                    <a href="{% url 'cart:del_quantity' g.id %}">
+                                        <div class="less layui-btn">
+                                            -
+                                        </div>
+                                    </a>
+                                    <input class="Quantity-input" type="" name="" value="{{ g.count }}"
+                                           disabled="disabled">
+                                    <a href="{% url 'cart:add_quantity' g.id %}">
+                                        <div class="add layui-btn">
+                                            +
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="th th-sum">
+                                <span class="sum">{% widthratio g.size.goodsSku.goodsSpu.price 1 g.count %}</span>
+                            </li>
+                            <li class="th th-op">
+                                <form action="{% url 'cart:del_cart' %}" method="post">
+                                    {#                    <span class="dele-btn">删除</span>#}
+                                    <input type="text" name="cart_id" value="{{ g.id }}" style="display: none">
+                                    <input class="dele-btn" type="submit" value="删除">
+                                </form>
+                            </li>
+                        </ul>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="FloatBarHolder layui-clear">
+                <form action="{% url 'order:orders' %}" method="post">
+                <div class="th th-chk">
+                    <div class="select-all">
+                        <div class="cart-checkbox">
+                            <select name="address" style="width: 200px; height: 30px;font-size: 20px; ">
+                                {% for a in addr %}
+                                <option value="{{ a.id }}">{{ a.receiver }} {{ a.phone }} {{ a.address }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="th Settlement">
+                    <button type="submit" class="layui-btn">结算</button>
+                </div>
+                    <input type="text" name="price" value="{{ price }}" style="display: none">
+            </form>
+                <div class="th total">
+                    <p>应付：<span class="pieces-total">{{ price }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

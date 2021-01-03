@@ -1,0 +1,7 @@
+Django
+pytz
+pillow
+pymysql
+mysqlclient
+django-tinymce
+sqlparse

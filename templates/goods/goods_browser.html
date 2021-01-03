@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+    <div class="content content-nav-base shopcart-content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                        <a href="{% url 'goods:goods_all' %}">所有商品</a>
+                        <a href="{% url 'user:perCen' request.session.user_id %}">个人中心</a>
+                        <a href="{% url 'goods:goods_browser' %}" class="active">浏览记录</a>
+                        <a href="{% url 'order:orders' %}">订单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="product-list-box" id="product-list-box">
+            <div class="product-list-cont w1200">
+                <hr>
+                <div class="product-item-box layui-clear">
+                    {% if not goods %}
+                        <div>
+                            <img src="{% static 'img/no.png' %}" alt="">
+                            <span style="margin-left: 20px; font-size: 20px">暂无商品</span>
+                        </div>
+                    {% endif %}
+                    {% for info in goods %}
+                        <div class="list-item">
+                            <a href="{% url 'goods:goods_detail' info.good_id %}"><img style="width: 160px; height: 160px"
+                                                                                  src="http://127.0.0.1:8000/{{ info.good.pic }}"></a>
+                            <p>{{ info.good.title }}</p>
+                            <span>￥{{ info.good.price }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}

@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+    <div class="content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                        <a href="{% url 'goods:goods_all' %}" class="active">所有商品</a>
+                        <a href="{% url 'user:perCen' request.session.user_id %}">个人中心</a>
+                        <a href="{% url 'goods:goods_browser' %}">浏览记录</a>
+                        <a href="{% url 'order:orders' %}">订单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="category-con">
+            <div class="category-inner-con w1200">
+                <div class="category-type">
+                    <h3>全部分类</h3>
+                </div>
+                <div class="category-tab-content">
+                    <div class="nav-con">
+                        <ul class="normal-nav layui-clear">
+                            {% for type in type_info %}
+                            {% if type.type_id == null %}
+                                <li class="nav-item">
+
+                                        <div class="title"><a
+                                                href="{% url 'goods:goods_all' type.id %}">{{ type.title }}</a></div>
+{#                                        <p>#}
+{#                                            {% for t in type_info %}#}
+{#                                                {% if t.type_id == type.id %}#}
+                                                    {#             url lianjieyaotiaozuan                       #}
+{#                                                    <a href="{% url 'goods:goods_all' t.id %}">{{ t.title }}</a>#}
+{#                                                {% endif %}#}
+{#                                            {% endfor %}#}
+{#                                        </p>#}
+                                        <i class="layui-icon layui-icon-right"></i>
+
+                                </li>
+                                  {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="category-banner">
+                <div class="w1200">
+                    <a href="{% url 'goods:promotion' %}"><img src="{% static 'img/banner1.jpg' %}"></a>
+                </div>
+            </div>
+        </div>
+        <div class="floors">
+            <div class="sk">
+                <div class="sk_inner w1200">
+                    <div class="sk_hd">
+                        <a href="javascript:;">
+                            <img src="{% static 'img/s_img1.jpg' %}">
+                        </a>
+                    </div>
+                    <div class="sk_bd">
+                        <div class="layui-carousel" id="test1">
+                            <div carousel-item>
+                                <div class="item-box">
+                                    {% for info in today %}
+                                        <div class="item">
+                                            <a href="{% url 'goods:goods_detail' info.id %}"><img
+                                                    style="width: 190px; height: 190px"
+                                                    src="http://127.0.0.1:8000/{{ info.pic }}"></a>
+                                            <div class="title">{{ info.title|slice:"7" }}...</div>
+                                            <div class="price">
+                                                <span>￥{{ info.price }}</span>
+                                                {#                                            <del>￥999.00</del>#}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="item-box">
+                                    {% for info in today1 %}
+                                        <div class="item">
+                                            <a href="{% url 'goods:goods_detail' info.id %}"><img
+                                                    style="width: 190px; height: 190px"
+                                                    src="http://127.0.0.1:8000/{{ info.pic }}"></a>
+                                            <div class="title">{{ info.title|slice:"7" }}...</div>
+                                            <div class="price">
+                                                <span>￥{{ info.price }}</span>
+                                                {#                                            <del>￥999.00</del>#}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="hot-recommend-con">
+            <div class="tlinks">Collect from <a href="http://www.cssmoban.com/">网页模板</a></div>
+            <div class="hot-con1 w1200 layui-clear">
+                <div class="item">
+                    <h4>热销推荐</h4>
+                    <div class="big-img" style="margin-top: 81px; background: #fff; ">
+                        <a  href="{% url 'goods:goods_detail' hot.0.id %}"><img style="width: 290px; height: 242px;" src="http://127.0.0.1:8000/{{ hot.0.pic }}"></a>
+                    </div>
+                    <div class="small-img">
+                        <a href="{% url 'goods:goods_detail' hot.1.id %}"><img style="height: 242px; width: 290px" src="http://127.0.0.1:8000/{{ hot.1.pic }}" alt=""></a>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="top-img">
+                        <a href="javascript:;"><img src="{% static 'img/hot5.jpg' %}"></a>
+                    </div>
+                    <div class="bottom-img">
+                        <a href="javascript:;"><img src="{% static 'img/hot6.jpg' %}"></a>
+                        <a class="baby-cream" href="javascript:;"><img src="{% static 'img/hot7.jpg' %}"></a>
+                    </div>
+                </div>
+                <div class="item item1 margin0 padding0">
+                    <a href="javascript:;"><img src="{% static 'img/hot8.jpg' %}"></a>
+                    <a href="{% url 'goods:promotion' %}"><img class="btm-img" src="{% static 'img/hot9.jpg' %}"></a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="product-cont w1200" id="product-cont">
+            <div class="product-item product-item1 layui-clear">
+                <div class="left-title">
+                    <h4><i>1F</i></h4>
+                    <img src="{% static 'img/icon_gou.png' %}">
+                    <h5>新品推荐</h5>
+                </div>
+                <div class="right-cont">
+                    <a href="javascript:;" class="top-img"><img src="{% static 'img/img12.jpg' %}" alt=""></a>
+                    <div class="img-box">
+                        {% for i in new %}
+                            <a href="{% url 'goods:goods_detail' i.id %}"><img src="http://127.0.0.1:8000/{{ i.pic }}"></a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="product-item product-item2 layui-clear">
+                <div class="left-title">
+                    <h4><i>2F</i></h4>
+                    <img src="{% static 'img/icon_gou.png' %}">
+                    <h5>男装服饰</h5>
+                </div>
+                <div class="right-cont">
+                    <a href="javascript:;" class="top-img"><img src="{% static 'img/img12.jpg' %}" alt=""></a>
+                    <div class="img-box">
+                        {% for i in male %}
+                            <a href="{% url 'goods:goods_detail' i.id %}"><img src="http://127.0.0.1:8000/{{ i.pic }}"></a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="product-item product-item3 layui-clear">
+                <div class="left-title">
+                    <h4><i>3F</i></h4>
+                    <img src="{% static 'img/icon_gou.png' %}">
+                    <h5>女装服饰</h5>
+                </div>
+                <div class="right-cont">
+                    <a href="javascript:;" class="top-img"><img src="{% static 'img/img12.jpg' %}" alt=""></a>
+                    <div class="img-box">
+                        {% for i in female %}
+                            <a href="{% url 'goods:goods_detail' i.id %}"><img src="http://127.0.0.1:8000/{{ i.pic }}"></a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-list-box" id="product-list-box">
+            <div class="product-list-cont w1200">
+                <h4>更多推荐</h4>
+                <div class="product-item-box layui-clear">
+                    {% for info in content %}
+                        <div class="list-item">
+                            <a href="{% url 'goods:goods_detail' info.id %}"><img style="width: 160px; height: 160px"
+                                                                                  src="http://127.0.0.1:8000/{{ info.pic }}"></a>
+                            <p>{{ info.title }}</p>
+                            <span>￥{{ info.price }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        layui.config({
+            base: '{% static 'js/util' %}/' //你存放新模块的目录，注意，不是layui的模块目录
+        }).use(['mm', 'carousel'], function () {
+            var carousel = layui.carousel,
+                mm = layui.mm;
+            var option = {
+                elem: '#test1'
+                , width: '100%' //设置容器宽度
+                , arrow: 'always'
+                , height: '298'
+                , indicator: 'none'
+            }
+            carousel.render(option);
+        });
+    </script>
+{% endblock body %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+    <div class="content content-nav-base shopcart-content">
+        <div class="main-nav">
+            <div class="inner-cont0">
+                <div class="inner-cont1 w1200">
+                    <div class="inner-cont2">
+                        <a href="{% url 'goods:goods_all' %}">所有商品</a>
+                        <a href="{% url 'user:perCen' request.session.user_id %}">个人中心</a>
+                        <a href="{% url 'goods:goods_browser' %}">浏览记录</a>
+                        <a href="{% url 'order:orders' %}" class="active">订单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 1200px; margin: 30px auto">
+            <ul class="layui-timeline">
+                {% for o in order %}
+                    <li class="layui-timeline-item">
+                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                        <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">{{ o.created_time }}</h3>
+                            <p>
+                                订单编号：{{ o.number }}
+                                <br>
+                                收货地址：{{ o.address.address }}
+                                <br>
+                                收货手机：{{ o.address.phone }}
+                                <br>
+                                收货人名：{{ o.address.receiver }}
+                                <br>
+                                {% for og in o.ordergoods_set.all %}
+                                    产品名称：{{ og.antique.goodsSku.goodsSpu.title }}
+                                    <br>
+                                    产品颜色：{{ og.antique.goodsSku.color }}
+                                    <br>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock body %}
